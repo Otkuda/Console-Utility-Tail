@@ -6,7 +6,6 @@ import org.kohsuke.args4j.Option;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Scanner;
 
 public class Utility {
@@ -22,7 +21,7 @@ public class Utility {
     private boolean isStr;
 
     @Argument()
-    private final ArrayList<String> files = new ArrayList<>();
+    private ArrayList<String> files = new ArrayList<>();
 
 
     public static void main(String[] args) throws IOException {
@@ -42,10 +41,11 @@ public class Utility {
             return;
         }
 
-        for(String name:files) {
-            tail(name, outputFile);
-        }
-
+        if (!files.isEmpty()) {
+            for (String name : files) {
+                tail(name, outputFile);
+            }
+        } else tail(null, outputFile);
     }
 
     private void tail(String inputName, String outputName) throws IOException {
@@ -70,8 +70,8 @@ public class Utility {
         }
 
         String result;
-        if (isStr) result = getLastStrings(input);
-        else if (isSym) result = getLastSymbols(input);
+        if (lastStrings != 0) result = getLastStrings(input, lastStrings);
+        else if (lastSymbols != 0) result = getLastSymbols(input, lastSymbols);
         else {
             if (input.toString().split("\n").length <= 10) result = input.toString();
             else {
@@ -88,16 +88,16 @@ public class Utility {
             }
         }
     }
-    private String getLastStrings(StringBuilder in) {
-        String[] array = in.toString().split("\n");
+    public String getLastStrings(StringBuilder in, int n) {
+        String[] array = in.toString().trim().split("\n");
         String[] res;
-        res = Arrays.stream(array).skip(array.length - lastStrings).toArray(String[]::new);
+        res = Arrays.stream(array).skip(array.length - n).toArray(String[]::new);
         return String.join("\n", res);
     }
 
-    private String getLastSymbols(StringBuilder in) {
-        String[] array = in.toString().split("");
-        return String.join("", Arrays.stream(array).skip(array.length - lastSymbols).toArray(String[]::new));
+    public String getLastSymbols(StringBuilder in, int n) {
+        String[] array = in.toString().trim().split("");
+        return String.join("", Arrays.stream(array).skip(array.length - n).toArray(String[]::new));
     }
 
 }

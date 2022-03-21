@@ -1,9 +1,11 @@
 plugins {
     id 'java'
+    id 'application'
 }
 
+
 group 'org.example'
-version '1.0-SNAPSHOT'
+version '1.03'
 
 repositories {
     mavenCentral()
@@ -15,6 +17,17 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 }
 
+jar {
+    manifest {
+        attributes "Main-Class": "Utility"
+    }
+
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
 test {
     useJUnitPlatform()
 }
+
